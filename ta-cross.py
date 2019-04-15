@@ -162,9 +162,7 @@ def main():
     signals['short_mavg'] = roll_d10
     signals['mid_mavg'] = roll_d50
 
-    d10_vector = []
-
-    last_date = int(time.mktime(roll_d10[-1:].index[0].timetuple()))
+    # last_date = int(time.mktime(roll_d10[-1:].index[0].timetuple()))
     # 20_date = int(time.mktime(roll_d10[-20:].index[0].timetuple()) )
 
     # data_normal = [roll_d10[-1:].index[0], roll_d10[-20:].index[0]]
