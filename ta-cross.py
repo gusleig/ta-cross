@@ -36,11 +36,11 @@ def cross_date(data1, data, prices_a, prices_b):
     # Now we have two lines: y1 = m1*T + b1 and y2 = m2*T + b2
     # they intersect at m1*T + b1 = m2*T + b2
     # or at T = (b2 - b1) / (m1 - m2)
-    b1 = u.ufloat((p1[0], se1[0]))
-    m1 = u.ufloat((p1[1], se1[1]))
+    b1 = u.ufloat(p1[0], se1[0])
+    m1 = u.ufloat(p1[1], se1[1])
 
-    b2 = u.ufloat((p2[0], se2[0]))
-    m2 = u.ufloat((p2[1], se2[1]))
+    b2 = u.ufloat(p2[0], se2[0])
+    m2 = u.ufloat(p2[1], se2[1])
 
     T_intersection = (b2 - b1) / (m1 - m2)
     # print(T_intersection)
@@ -50,7 +50,7 @@ def cross_date(data1, data, prices_a, prices_b):
     return datetime.datetime.fromtimestamp(int(T_intersect_nv))
 
 
-def cross(data1, data, prices_a, prices_b):
+def plot_next_cross(data1, data, prices_a, prices_b):
     D = np.array(data1)
     T = np.array(data)
     E1 = np.array(prices_a)
@@ -65,11 +65,11 @@ def cross(data1, data, prices_a, prices_b):
     # Now we have two lines: y1 = m1*T + b1 and y2 = m2*T + b2
     # they intersect at m1*T + b1 = m2*T + b2
     # or at T = (b2 - b1) / (m1 - m2)
-    b1 = u.ufloat((p1[0], se1[0]))
-    m1 = u.ufloat((p1[1], se1[1]))
+    b1 = u.ufloat(p1[0], se1[0])
+    m1 = u.ufloat(p1[1], se1[1])
 
-    b2 = u.ufloat((p2[0], se2[0]))
-    m2 = u.ufloat((p2[1], se2[1]))
+    b2 = u.ufloat(p2[0], se2[0])
+    m2 = u.ufloat(p2[1], se2[1])
 
     T_intersection = (b2 - b1) / (m1 - m2)
     # print(T_intersection)
@@ -99,9 +99,9 @@ def cross(data1, data, prices_a, prices_b):
 
     ax.plot(a, b, 'go', ms=13, alpha=0.2, label='Intersection')
 
-    x = datetime.datetime.fromtimestamp(int((T_intersect_nv - 2 * T_intersection.std_dev())))
+    x = datetime.datetime.fromtimestamp(int((T_intersect_nv - 2 * T_intersection.std_dev)))
 
-    y = datetime.datetime.fromtimestamp(int((T_intersect_nv + 2 * T_intersection.std_dev())))
+    y = datetime.datetime.fromtimestamp(int((T_intersect_nv + 2 * T_intersection.std_dev)))
 
     ax.plot([x,
              y],
@@ -174,7 +174,7 @@ def main():
     prices_a = roll_d10[-20:].tolist()
     prices_b = roll_d50[-20:].tolist()
 
-    # cross(data_normal, data_ts, prices_a, prices_b)
+    plot_next_cross(data_normal, data_ts, prices_a, prices_b)
 
     # plot_crosses(signals, btc_adj, roll_d10, roll_d50)
     print(cross_date(data_normal, data_ts, prices_a, prices_b))
