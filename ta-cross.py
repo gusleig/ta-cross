@@ -140,8 +140,10 @@ def plot_crosses(signals, btc_adj, roll_d10, roll_d50, short_window):
 
 
 def main():
-    # %config InlineBackend.figure_format = 'retina'
-    # %matplotlib inline
+
+    # number of daily candles to analyze
+
+    x = 30
 
     btc = web.get_data_yahoo('BTC-USD', start=datetime.datetime(2017, 1, 1), end=date.today())
 
@@ -166,17 +168,19 @@ def main():
     # 20_date = int(time.mktime(roll_d10[-20:].index[0].timetuple()) )
 
     # data_normal = [roll_d10[-1:].index[0], roll_d10[-20:].index[0]]
-    data_normal = roll_d10[-20:].index.tolist()
+    data_normal = roll_d10[-x:].index.tolist()
 
     # data_ts = [int(time.mktime(roll_d10[-1:].index[0].timetuple()) ), int(time.mktime(roll_d10[-20:].index[0].timetuple()) )]
-    data_ts = (roll_d10[-20:].index.astype(np.int64) // 10 ** 9).tolist()
+    # convert time to timestamp to act as a number
+    data_ts = (roll_d10[-x:].index.astype(np.int64) // 10 ** 9).tolist()
 
-    prices_a = roll_d10[-20:].tolist()
-    prices_b = roll_d50[-20:].tolist()
+    prices_a = roll_d10[-x:].tolist()
+    prices_b = roll_d50[-x:].tolist()
 
     plot_next_cross(data_normal, data_ts, prices_a, prices_b)
 
     # plot_crosses(signals, btc_adj, roll_d10, roll_d50)
+
     print(cross_date(data_normal, data_ts, prices_a, prices_b))
 
 
