@@ -13,6 +13,8 @@ from uncertainties import unumpy
 from scipy.optimize import fsolve
 from matplotlib.dates import DateFormatter
 from matplotlib import rcParams
+from scipy.signal import find_peaks
+import talib
 
 rcParams.update({'figure.autolayout': True})
 
@@ -139,6 +141,24 @@ def plot_crosses(signals, btc_adj, roll_d10, roll_d50, short_window):
     # plt.savefig('images/intersection-1.png')
 
 
+def rsi_peaks(closePrices):
+    np.random.seed(42)
+
+    rsi = talib.RSI(closePrices, timeperiod=14)
+
+    # borrowed from @Majid Mortazavi's answer
+    random_number1 = np.random.randint(0, 200, 20)
+    random_number2 = np.random.randint(0, 20, 100)
+    random_number = np.concatenate((random_number1, random_number2))
+    np.random.shuffle(random_number)
+
+    peaks, _ = find_peaks(random_number, height=100)
+
+    plt.plot(random_number)
+    plt.plot(peaks, random_number[peaks], "x")
+    plt.show()
+
+
 def main():
 
     # number of daily candles to analyze
@@ -149,6 +169,7 @@ def main():
 
     btc_adj = btc['Adj Close']
 
+    rsi_peaks(btc_adj)
     # btc_adj.plot(lw=2.5, figsize=(12, 5))
     # plt.show()
 
