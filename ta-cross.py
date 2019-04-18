@@ -15,6 +15,7 @@ from matplotlib.dates import DateFormatter
 from matplotlib import rcParams
 from scipy.signal import find_peaks
 import talib
+from peakdetect import peakdetect
 
 rcParams.update({'figure.autolayout': True})
 
@@ -142,20 +143,28 @@ def plot_crosses(signals, btc_adj, roll_d10, roll_d50, short_window):
 
 
 def rsi_peaks(closePrices):
+
     np.random.seed(42)
 
     rsi = talib.RSI(closePrices, timeperiod=14)
 
+    # https://gist.github.com/sixtenbe/1178136#file-peakdetect-py
+    # cb = np.array([-0.010223, ...])
+    # peaks = peakdetect(cb, lookahead=100)
+
     # borrowed from @Majid Mortazavi's answer
     random_number1 = np.random.randint(0, 200, 20)
     random_number2 = np.random.randint(0, 20, 100)
-    random_number = np.concatenate((random_number1, random_number2))
-    np.random.shuffle(random_number)
+    # random_number = np.concatenate((rsi.index, rsi.values))
 
-    peaks, _ = find_peaks(random_number, height=100)
+    # random_number = np.concatenate((y, x))
 
-    plt.plot(random_number)
-    plt.plot(peaks, random_number[peaks], "x")
+    peaks, _ = find_peaks(rsi[-20:].values, height=60)
+
+
+    plt.plot(rsi[-20:].index, rsi[-20:].values)
+    plt.plot(rsi[peaks].index, rsi[peaks].values, "x")
+
     plt.show()
 
 
