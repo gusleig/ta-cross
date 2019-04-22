@@ -12,6 +12,10 @@ import uncertainties as u
 from uncertainties import unumpy
 from scipy.optimize import fsolve
 from matplotlib.dates import DateFormatter
+import matplotlib.ticker as mticker
+
+import matplotlib.dates as mdates
+
 from matplotlib import rcParams
 from scipy.signal import find_peaks
 import talib
@@ -142,9 +146,20 @@ def plot_crosses(signals, btc_adj, roll_d10, roll_d50, short_window):
     # plt.savefig('images/intersection-1.png')
 
 
-def rsi_peaks(closePrices):
+def rsi_peaks(closePrices, candles=10):
 
     np.random.seed(42)
+
+    fig, ax = plt.subplots(facecolor='#07000d')
+
+    ax.set_facecolor('#07000d')
+
+    #fig = plt.figure(facecolor='#07000d')
+    # ax = plt.subplot2grid((6,4), (0,0), axisbg='#07000d')
+
+    rsiCol = '#c1f9f7'
+    posCol = '#386d13'
+    negCol = '#8f2020'
 
     rsi = talib.RSI(closePrices, timeperiod=14)
 
@@ -152,18 +167,49 @@ def rsi_peaks(closePrices):
     # cb = np.array([-0.010223, ...])
     # peaks = peakdetect(cb, lookahead=100)
 
-    # borrowed from @Majid Mortazavi's answer
-    random_number1 = np.random.randint(0, 200, 20)
-    random_number2 = np.random.randint(0, 20, 100)
-    # random_number = np.concatenate((rsi.index, rsi.values))
+    minima = []
+    maxima = []
 
-    # random_number = np.concatenate((y, x))
+    rsi_n = rsi[-candles:]
 
-    peaks, _ = find_peaks(rsi[-20:].values, height=60)
+    for i in range(1, candles-1):
 
+        if rsi_n[i] < rsi_n[i-1] and rsi_n[i] < rsi_n[i+1]:
+            # local minima
+            minima.append(i)
+        if rsi_n[i] > rsi_n[i - 1] and rsi_n[i] > rsi_n[i + 1]:
+            # local maxima
+            maxima.append(i)
 
-    plt.plot(rsi[-20:].index, rsi[-20:].values)
-    plt.plot(rsi[peaks].index, rsi[peaks].values, "x")
+    # peaks, _ = find_peaks(rsi_n.values, height=60)
+
+    ax.plot(rsi[-candles:].index, rsi[-candles:].values, rsiCol, label="RSI", linewidth=1.5)
+    # plt.plot(rsi_n[peaks].index, rsi_n[peaks].values, "x")
+
+    ax.fill_between(rsi[-candles:].index, rsi[-candles:].values, 70, where=(rsi[-candles:].values >= 70), facecolor=negCol, edgecolor=negCol, alpha=0.5)
+    ax.fill_between(rsi[-candles:].index, rsi[-candles:].values, 30, where=(rsi[-candles:].values <= 30), facecolor=posCol, edgecolor=posCol, alpha=0.5)
+
+    ax.set_yticks([30, 70])
+    ax.yaxis.label.set_color("w")
+    ax.spines['bottom'].set_color("#5998ff")
+    ax.spines['top'].set_color("#5998ff")
+    ax.spines['left'].set_color("#5998ff")
+    ax.spines['right'].set_color("#5998ff")
+    ax.tick_params(axis='y', colors='w')
+    ax.tick_params(axis='x', colors='w')
+    plt.ylabel('RSI')
+
+    ax.plot(rsi_n[maxima], "x")
+
+    fig.autofmt_xdate()
+
+    ax.axhline(70, color=negCol)
+    ax.axhline(30, color=posCol)
+
+    ax.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
+    plt.ylabel('RSI')
+
+    ax.grid(True, color='w')
 
     plt.show()
 
