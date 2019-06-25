@@ -59,67 +59,8 @@ def cross_date(data1, data, prices_a, prices_b):
     return datetime.datetime.fromtimestamp(int(T_intersect_nv))
 
 
-def plot_next_cross(data1, data, prices_a, prices_b):
-    D = np.array(data1)
-    T = np.array(data)
-    E1 = np.array(prices_a)
-    E2 = np.array(prices_b)
 
-    A = np.column_stack([T ** 0, T])
-
-    p1, pint1, se1 = regress(A, E1, alpha=0.05)
-
-    p2, pint2, se2 = regress(A, E2, alpha=0.05)
-
-    # Now we have two lines: y1 = m1*T + b1 and y2 = m2*T + b2
-    # they intersect at m1*T + b1 = m2*T + b2
-    # or at T = (b2 - b1) / (m1 - m2)
-    b1 = u.ufloat(p1[0], se1[0])
-    m1 = u.ufloat(p1[1], se1[1])
-
-    b2 = u.ufloat(p2[0], se2[0])
-    m2 = u.ufloat(p2[1], se2[1])
-
-    T_intersection = (b2 - b1) / (m1 - m2)
-    # print(T_intersection)
-
-    T_intersect_nv = T_intersection.nominal_value
-
-    print(datetime.datetime.fromtimestamp(int(T_intersect_nv)))
-
-    fig, ax = plt.subplots()
-
-    ax.set(xlabel="Date", ylabel="Price (USD)", )
-    ax.set_title("Golden/Death Cross\nEstim. Date")
-
-    myFmt = DateFormatter("%m-%d")
-
-    ax.xaxis.set_major_formatter(myFmt)
-    ax.tick_params(axis='x', rotation=45)
-
-    # plot the data, the fits and the intersection and \pm 2 \sigma.
-    ax.plot(D, E1, 'bo ', label='MA50')
-    ax.plot(D, np.dot(A, p1), 'b-')
-    ax.plot(D, E2, 'ro ', label='MA200')
-    ax.plot(D, np.dot(A, p2), 'r-')
-
-    a = datetime.datetime.fromtimestamp(int(T_intersect_nv))
-    b = (b1 + m1 * T_intersection).nominal_value
-
-    ax.plot(a, b, 'go', ms=13, alpha=0.2, label='Intersection')
-
-    x = datetime.datetime.fromtimestamp(int((T_intersect_nv - 2 * T_intersection.std_dev)))
-
-    y = datetime.datetime.fromtimestamp(int((T_intersect_nv + 2 * T_intersection.std_dev)))
-
-    ax.plot([x,
-             y],
-            [(b1 + m1 * T_intersection).nominal_value,
-             (b1 + m1 * T_intersection).nominal_value],
-            'g-', lw=3, label='$\pm 2 \sigma$')
-
-    ax.legend(loc='best')
-    plt.show()
+    # print("end")
 
 
 def plot_crosses(signals, btc_adj, roll_d10, roll_d50, short_window):
@@ -216,6 +157,76 @@ def rsi_peaks(closePrices, candles=10):
     plt.show()
 
 
+def plot_next_cross(data1, data, prices_a, prices_b):
+    D = np.array(data1)
+    T = np.array(data)
+    E1 = np.array(prices_a)
+    E2 = np.array(prices_b)
+
+    A = np.column_stack([T ** 0, T])
+
+    p1, pint1, se1 = regress(A, E1, alpha=0.05)
+
+    p2, pint2, se2 = regress(A, E2, alpha=0.05)
+
+    # Now we have two lines: y1 = m1*T + b1 and y2 = m2*T + b2
+    # they intersect at m1*T + b1 = m2*T + b2
+    # or at T = (b2 - b1) / (m1 - m2)
+    b1 = u.ufloat(p1[0], se1[0])
+    m1 = u.ufloat(p1[1], se1[1])
+
+    b2 = u.ufloat(p2[0], se2[0])
+    m2 = u.ufloat(p2[1], se2[1])
+
+    T_intersection = (b2 - b1) / (m1 - m2)
+    # print(T_intersection)
+
+    T_intersect_nv = T_intersection.nominal_value
+
+    print(datetime.datetime.fromtimestamp(int(T_intersect_nv)))
+
+    fig, ax = plt.subplots()
+
+    # plt.figure()
+
+    ax.set(xlabel="Date", ylabel="Price (USD)", )
+    ax.set_title("Golden/Death Cross\nEstim. Date")
+
+    myFmt = DateFormatter("%m-%d")
+
+    ax.xaxis.set_major_formatter(myFmt)
+    ax.tick_params(axis='x', rotation=45)
+
+    # plot the data, the fits and the intersection and \pm 2 \sigma.
+    ax.plot(D, E1, 'bo ', label='MA50')
+    ax.plot(D, np.dot(A, p1), 'b-')
+    ax.plot(D, E2, 'ro ', label='MA200')
+    ax.plot(D, np.dot(A, p2), 'r-')
+
+    a = datetime.datetime.fromtimestamp(int(T_intersect_nv))
+    b = (b1 + m1 * T_intersection).nominal_value
+
+    ax.plot(a, b, 'go', ms=13, alpha=0.2, label='Intersection')
+
+    label = "{:.2f}".format(b) + " - " + str(a.date())
+
+    ax.annotate(label, xy=(a, b), xycoords='data', xytext=(a, b),
+                arrowprops=dict(facecolor='black', shrink=0.05))
+
+    x = datetime.datetime.fromtimestamp(int((T_intersect_nv - 2 * T_intersection.std_dev)))
+
+    y = datetime.datetime.fromtimestamp(int((T_intersect_nv + 2 * T_intersection.std_dev)))
+
+    ax.plot([x,
+             y],
+            [(b1 + m1 * T_intersection).nominal_value,
+             (b1 + m1 * T_intersection).nominal_value],
+            'g-', lw=3, label='$\pm 2 \sigma$')
+
+    ax.legend(loc='best')
+    plt.show(block=True)
+
+
 def main():
 
     # number of daily candles to analyze
@@ -246,10 +257,7 @@ def main():
     signals['short_mavg'] = roll_d10
     signals['mid_mavg'] = roll_d50
 
-    # last_date = int(time.mktime(roll_d10[-1:].index[0].timetuple()))
-    # 20_date = int(time.mktime(roll_d10[-20:].index[0].timetuple()) )
 
-    # data_normal = [roll_d10[-1:].index[0], roll_d10[-20:].index[0]]
     data_normal = roll_d10[-x:].index.tolist()
 
     # data_ts = [int(time.mktime(roll_d10[-1:].index[0].timetuple()) ), int(time.mktime(roll_d10[-20:].index[0].timetuple()) )]
