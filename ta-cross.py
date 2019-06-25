@@ -19,7 +19,9 @@ import matplotlib.dates as mdates
 from matplotlib import rcParams
 from scipy.signal import find_peaks
 import talib
-from peakdetect import peakdetect
+
+
+# from peakdetect import peakdetect
 
 rcParams.update({'figure.autolayout': True})
 
@@ -218,18 +220,22 @@ def main():
 
     # number of daily candles to analyze
 
-    x = 30
+    x = 60
+
+    date_str = (datetime.datetime.now() - datetime.timedelta(days=x)).date()
 
     btc = web.get_data_yahoo('BTC-USD', start=datetime.datetime(2017, 1, 1), end=date.today())
 
     btc_adj = btc['Adj Close']
 
-    rsi_peaks(btc_adj)
+    # show rsi peaks (beta)
+    # rsi_peaks(btc_adj)
+
     # btc_adj.plot(lw=2.5, figsize=(12, 5))
     # plt.show()
 
-    short_window = 50
-    mid_window = 200
+    short_window = 150
+    mid_window = 600
 
     signals = pd.DataFrame(index=btc_adj.index)
     signals['signal'] = 0.0
