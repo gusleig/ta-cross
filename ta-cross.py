@@ -15,11 +15,9 @@ from matplotlib.dates import DateFormatter
 import matplotlib.ticker as mticker
 
 import matplotlib.dates as mdates
-
 from matplotlib import rcParams
 from scipy.signal import find_peaks
 import talib
-
 
 # from peakdetect import peakdetect
 
