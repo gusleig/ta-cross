@@ -2,21 +2,19 @@ import pandas as pd
 import pandas_datareader.data as web
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 import datetime
 from datetime import date
 from pandas.plotting import register_matplotlib_converters
-import time
 from pycse import regress
 import uncertainties as u
-from uncertainties import unumpy
-from scipy.optimize import fsolve
+# from uncertainties import unumpy
+# from scipy.optimize import fsolve
 from matplotlib.dates import DateFormatter
-import matplotlib.ticker as mticker
-
+# import matplotlib.ticker as mticker
 import matplotlib.dates as mdates
 from matplotlib import rcParams
-from scipy.signal import find_peaks
+# from scipy.signal import find_peaks
 import talib
 
 # from peakdetect import peakdetect
@@ -55,10 +53,6 @@ def cross_date(data1, data, prices_a, prices_b):
     T_intersect_nv = T_intersection.nominal_value
 
     return datetime.datetime.fromtimestamp(int(T_intersect_nv))
-
-
-
-    # print("end")
 
 
 def plot_crosses(signals, btc_adj, roll_d10, roll_d50, short_window):
