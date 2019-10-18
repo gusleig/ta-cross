@@ -132,6 +132,7 @@ def rsi_peaks(closePrices, candles=10):
     ax.spines['right'].set_color("#5998ff")
     ax.tick_params(axis='y', colors='w')
     ax.tick_params(axis='x', colors='w')
+
     plt.ylabel('RSI')
 
     ax.plot(rsi_n[maxima], "x")
@@ -209,11 +210,15 @@ def plot_next_cross(data1, data, prices_a, prices_b):
 
     y = datetime.datetime.fromtimestamp(int((T_intersect_nv + 2 * T_intersection.std_dev)))
 
+    plt.show(block=False)
+
+    '''
     ax.plot([x,
              y],
             [(b1 + m1 * T_intersection).nominal_value,
              (b1 + m1 * T_intersection).nominal_value],
-            'g-', lw=3, label='$\pm 2 \sigma$')
+            'g-', lw=0.5, label='$\pm 2 \sigma$')
+    '''
 
     ax.legend(loc='best')
     plt.show(block=True)
@@ -237,8 +242,8 @@ def main():
     # btc_adj.plot(lw=2.5, figsize=(12, 5))
     # plt.show()
 
-    short_window = 150
-    mid_window = 600
+    short_window = 50
+    mid_window = 200
 
     signals = pd.DataFrame(index=btc_adj.index)
     signals['signal'] = 0.0
